@@ -1,0 +1,46 @@
+canvas {
+    position: absolute;
+}
+
+#crosshair-layer {
+    z-index: 2;
+    cursor: none;
+}
+#graph-layer {
+    z-index: 1;
+}
+
+#coordinates {
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    width: 8rem;
+    display: flex;
+}
+
+div.coordinate-value {
+    border-bottom: solid lightslategrey 1px;
+    width: 3rem;
+    text-align: right;
+    display: flexbox;
+    font-family: "Courier New", monospace;
+}
+
+div.coordinate-label {
+    display: flex;
+    background-color: lightslategrey;
+    color: white;
+    font-weight: bold;
+    padding-left: 8px;
+    padding-right: 4px;
+}
+
+div.spacer {
+    width: 1rem;
+}
+
+#stage {
+    position: relative;
+    border: 2px solid black;
+}
+

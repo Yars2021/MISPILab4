@@ -1,0 +1,91 @@
+.form-label {
+    width: 32px;
+    text-align: right;
+}
+
+.left-aligned {
+    text-align: left;
+}
+
+.centered {
+    text-align: center;
+}
+
+.right-aligned {
+    text-align: right;
+}
+
+.padded {
+    padding: 8px;
+}
+
+.item-name {
+    font-weight: bolder;
+}
+
+.time-panel {
+    background-color: slategrey;
+    border: solid slategrey 1px;
+    color: white;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.info-card {
+    border: solid slategrey 1px;
+}
+
+.info-content {
+    font-family: "Courier New", monospace;
+    text-align: left;
+    padding-left: 8px;
+}
+
+.form-container {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    border: solid lightslategrey 1px;
+    border-radius: 4px;
+    background-color: lightgrey;
+}
+
+.form-footer {
+    background-color: lightslategrey;
+    text-align: right;
+}
+
+.navigation-panel {
+    background-color: lightgrey;
+    text-align: right;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    padding: 4px 8px 4px 4px;
+}
+
+.par-values {
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    color: lightslategrey;
+    text-align: right;
+    padding-right: 16px;
+}
+
+.left-panel {
+    width: 500px;
+    padding-right: 4px;
+    z-index: 1;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    border-right: solid lightslategrey 1px;
+}
+
+.main-panel {
+    margin-left: 500px;
+}
+

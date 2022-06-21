@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+<f:view contentType="text/html;charset=UTF-8" encoding="UTF-8">
+    <h:head>
+        <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css"/>
+        <link rel="stylesheet" href="${request.contextPath}/css/main.css"/>
+    </h:head>
+    <h:body>
+        <div class="p-grid">
+            <div class="p-col"></div>
+            <div class="p-col p-col-fixed" style="width: 640px">
+                <h:form styleClass="form-container">
+                    <div class="ui-fluid">
+                        <div class="p-field p-grid">
+                            <div class="p-col-12 p-mb-7 p-md-7 p-mb-md-0 left-aligned">
+                                <div class="padded">
+                                    <h1>PointChecker App</h1>
+                                    <h2>JSF Version</h2>
+                                    <div class="info-content">
+                                        <div><span class="item-name">Author:</span> Sukhovey Yaroslav</div>
+                                        <div><span class="item-name">Group:</span> P3214</div>
+                                        <div><span class="item-name">Variant:</span> 52386</div>
+                                        <div><span class="item-name">Sources:</span> <a
+                                                href="https://github.com/Yars2021/PointCheckerJSF"
+                                                target="_blank">github</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-col-12 p-md-5">
+                                <div class="centered padded">
+                                    <canvas id="clocks">Your browser does not support canvas</canvas>
+                                    <div id="timePanel" class="time-panel"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-footer">
+                        <p:commandButton value="Go to PointChecker" action="goToChecker"/>
+                    </div>
+                </h:form>
+            </div>
+            <div class="p-col"></div>
+        </div>
+        <script type="text/javascript" src="#{request.contextPath}/scripts/clocks.js"></script>
+        <script type="text/javascript">
+            let c = clocks('#clocks', 200, 9, '#timePanel');
+            c.run();
+        </script>
+    </h:body>
+</f:view>
+</html>

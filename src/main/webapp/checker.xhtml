@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<f:view contentType="text/html;charset=UTF-8" encoding="UTF-8">
+    <h:head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css"/>
+        <link rel="stylesheet" href="${request.contextPath}/css/main.css"/>
+        <link rel="stylesheet" href="${request.contextPath}/css/graph.css"/>
+    </h:head>
+
+    <h:body>
+        <div class="p-grid">
+            <div class="p-col-fixed nested-grid left-panel">
+                <div class="p-grid">
+                    <div class="p-col">
+                        <div class="form-container"
+                             style="margin-bottom: 8px; border: solid grey 1px; border-radius: 8px;">
+                            <h:form id="formNewPoint" style="padding-top: 8px;">
+                                <div class="ui-fluid">
+                                    <div class="p-field p-grid">
+                                        <div class="p-col-12 p-mb-1 p-md-1 p-mb-md-0 right-aligned">X:</div>
+                                        <div class="p-col-12 p-md-9">
+                                            <p:inputNumber value="#{newPoint.x}"
+                                                           decimalSeparator="."
+                                                           decimalSeparatorAlternative=","
+                                                           decimalPlaces="1"
+                                                           modifyValueOnWheel="false"
+                                                           required="true"
+                                                           emptyValue="0.0"
+                                                           minValue="-5.0"
+                                                           maxValue="5.0"
+                                                           id="xInput" inputStyle="background-color: darkgrey"/>
+                                        </div>
+                                        <div class="p-col-12 p-mb-2 p-md-2 p-mb-md-0 par-values"></div>
+                                    </div>
+                                    <div class="p-field p-grid">
+                                        <div class="p-col-12 p-mb-1 p-md-1 p-mb-md-0 right-aligned">Y:</div>
+                                        <div class="p-col-12 p-md-9">
+                                            <ui:repeat value="#{appConfig.yValues}" var="y"> [
+                                                <p:commandLink action="#{newPoint.updateY(y)}" update="formNewPoint">
+                                                    <h:outputText value="#{y}"/>
+                                                </p:commandLink>]
+                                            </ui:repeat>
+                                        </div>
+                                        <div class="p-col-12 p-mb-2 p-md-2 p-mb-md-0 par-values">#{newPoint.y}</div>
+                                    </div>
+                                </div>
+                                <div class="p-field p-grid">
+                                    <div class="p-col-12 p-mb-1 p-md-1 p-mb-md-0 right-aligned">R:</div>
+                                    <div class="p-col-12 p-md-9">
+                                        <ui:repeat value="#{appConfig.rValues}" var="r">
+                                            <p:commandButton value="#{r}" action="#{newPoint.updateR(r)}"
+                                                             styleClass="rounded-button ui-button-secondary" ajax="true"
+                                                             form="formNewPoint" update="formNewPoint"
+                                                             oncomplete="updateR(#{r})"/>
+                                        </ui:repeat>
+                                    </div>
+                                    <div class="p-col-12 p-mb-2 p-md-2 p-mb-md-0 par-values">#{newPoint.r}</div>
+                                </div>
+                                <div class="form-footer">
+                                    <p:commandButton form="formNewPoint" ajax="true" action="#{points.add(newPoint)}"
+                                                     oncomplete="checkPointHit(#{newPoint.x}, #{newPoint.y})"
+                                                     value="Check"
+                                                     icon="pi pi-check"
+                                                     update="history"/>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div id="coordinates">
+                            <div class="coordinate-label"> X:</div>
+                            <div class="coordinate-value" id="coordinateX">0.0</div>
+                            <div class="spacer"></div>
+                            <div class="coordinate-label"> Y:</div>
+                            <div class="coordinate-value" id="coordinateY">0.0</div>
+                        </div>
+                        <canvas id="graph-layer" height="480" width="480"/>
+                        <canvas id="crosshair-layer" height="480" width="480"/>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col main-panel">
+                <div class="navigation-panel">
+                    <h:form id="fBack">
+                        <p:commandLink id="back" action="goToMain" form="fBack" ajax="false">
+                            <h:outputText value="Back to the start page"/>
+                        </p:commandLink>
+                    </h:form>
+                </div>
+                <h:form id="historyActions">
+                    <p:remoteCommand name="clearPoints" action="#{points.clearData}"/>
+                    <p:remoteCommand name="loadPoints" action="#{points.restore}"/>
+                    <h2>History (<p:commandLink id="clearHistory" action="#{points.clearData}" form="historyActions"
+                                                ajax="true"
+                                                oncomplete="_clearPoints()" update="history"><h:outputText
+                            value="clear"/></p:commandLink>)</h2>
+                </h:form>
+                <div id="tableTop" class=".tableTop"></div>
+                <p:dataTable id="history" var="point" value="${points.all}" scrollable="true" scrollHeight="480">
+                    <p:column headerText="Date" footerText="Date">
+                        <h:outputText value="#{point.dateAsString}"/>
+                    </p:column>
+                    <p:column headerText="X" footerText="X">
+                        <h:outputText value="#{point.x}"/>
+                    </p:column>
+                    <p:column headerText="Y" footerText="Y">
+                        <h:outputText value="#{point.y}"/>
+                    </p:column>
+                    <p:column headerText="R" footerText="R">
+                        <h:outputText value="#{point.r}"/>
+                    </p:column>
+                    <p:column headerText="Hit" footerText="Hit" class="centered">
+                        <p:tag styleClass="p-mr-2" severity='#{point.hit?"success":"danger"}'
+                               value='#{point.hit?"yes":"no"}'/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </div>
+        <h:form id="formGraphPoint">
+            <p:remoteCommand name="checkPointOnGraph" action="#{points.addFromGraph}" update="history"/>
+            <p:remoteCommand name="getPointHit" action="#{points.getHit}"/>
+        </h:form>
+        <script type="text/javascript">
+            function _checkPointOnGraph(_x, _y, _r, _metrics, _push) {
+                checkPointOnGraph([{name: 'fgX', value: _x}, {name: 'fgY', value: _y}, {name: 'fgR', value: _r}])
+                    .then((result) => {
+                        drawDot(_x, _y, metrics, _push, result.jqXHR.pfArgs.hit);
+                    });
+            }
+
+            function _getPointHit(_x, _y, _r) {
+                getPointHit([{name: 'fgX', value: _x}, {name: 'fgY', value: _y}, {name: 'fgR', value: _r}])
+                    .then((result) => {
+                        addDot(_x, _y, result.jqXHR.pfArgs.hit);
+                    });
+            }
+
+            function _loadPoints() {
+                if (dots.length === 0) {
+                    loadPoints().then((result) => {
+                            //console.log("Data received: " + result.jqXHR.pfArgs.data);
+                            //console.log("Loaded " + result.jqXHR.pfArgs.loaded + " points");
+                            let data = JSON.parse(result.jqXHR.pfArgs.data);
+                            //console.log("Data parsed: " + data);
+                            dots = data.dots;
+                        }
+                    )
+                }
+            }
+
+            function _clearPoints() {
+                dots = [];
+            }
+        </script>
+        <script type="text/javascript" src="#{request.contextPath}/scripts/main.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/scripts/graph.js"></script>
+        <script type="text/javascript">
+            _loadPoints();
+        </script>
+    </h:body>
+</f:view>
+</html>
